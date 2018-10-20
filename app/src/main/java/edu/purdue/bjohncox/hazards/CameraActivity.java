@@ -2,6 +2,7 @@ package edu.purdue.bjohncox.hazards;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -17,12 +18,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import com.google.firebase.FirebaseApp;
 
 public class CameraActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     ImageView imageView;
+    Camera camera;
+    FrameLayout frameLayout;
+    ShowCamera showCamera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +47,7 @@ public class CameraActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Button btnCamera = (Button)findViewById(R.id.btnCamera);
+        Button btnCamera = (Button)findViewById(R.id.gallery);
         imageView = (ImageView)findViewById(R.id.imageView);
 
         btnCamera.setOnClickListener(new View.OnClickListener(){
@@ -50,6 +57,26 @@ public class CameraActivity extends AppCompatActivity
             }
         });
 
+        frameLayout = (FrameLayout) findViewById(R.id.frameLayout);
+        camera = Camera.open();
+        showCamera = new ShowCamera(this,camera);
+        frameLayout.addView(showCamera);
+
+    }
+
+
+    Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] bytes, Camera camera) {
+            System.out.println("I took a picture");
+            FirestorageUtil.uploadImageToStorage(bytes,getApplicationContext());
+        }
+    };
+
+    public void captureImage(View v){
+        if(camera!=null){
+            camera.takePicture(null,null, mPictureCallback);
+        }
     }
 
     public void transitionToCollectionActivity(){

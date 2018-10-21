@@ -1,5 +1,6 @@
 package edu.purdue.bjohncox.hazards;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -43,7 +44,7 @@ public class ImageCollectionActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.camera, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -69,9 +70,11 @@ public class ImageCollectionActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_search) {
-
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_submit) {
-
+//            Intent intent = new Intent(this,SubmitHazardsActivity.class);
+//            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

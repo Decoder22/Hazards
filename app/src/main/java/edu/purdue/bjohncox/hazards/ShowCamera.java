@@ -21,13 +21,19 @@ public class ShowCamera extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int former, int width, int height) {
+    }
 
+    public void restartCamera(){
+        camera.startPreview();
+    }
+
+    public void pauseCamera() {
+        camera.stopPreview();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         camera.stopPreview();
-        camera.release();
     }
 
     @Override

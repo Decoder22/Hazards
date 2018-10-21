@@ -14,21 +14,25 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+
 public class FirestorageUtil {
 
     static FirebaseStorage storage = FirebaseStorage.getInstance();
 
-    public static void uploadImageToStorage(byte[] data, Context c) {
+    public static void uploadImageToStorage(byte[] data, Context c, final OnCompleteListener<Uri> onCompleteListener) {
 
         FirebaseApp.initializeApp(c);
         StorageReference storageRef = storage.getReference();
-        final StorageReference imageRef = storageRef.child("Name");
+        final StorageReference imageRef = storageRef.child(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Timestamp(System.currentTimeMillis())));
         final UploadTask uploadTask = imageRef.putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle unsuccessful uploads
                 System.out.println("Upload failed");
+                onCompleteListener.onComplete(null);
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -50,7 +54,9 @@ public class FirestorageUtil {
                         if (task.isSuccessful()) {
                             Uri downloadUri = task.getResult();
                             System.out.println("GOT THE URI: "+downloadUri);
+                            onCompleteListener.onComplete(task);
                         } else {
+                            onCompleteListener.onComplete(null);
                             System.out.println("Stuff failed");
                         }
                     }
@@ -59,4 +65,5 @@ public class FirestorageUtil {
         });
 
     }
+
 }
